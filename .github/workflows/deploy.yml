@@ -1,9 +1,9 @@
-name: Deploy para GitHub Pages
+name: Deploy GitHub Pages
 
 on:
   push:
     branches:
-      - main  # Roda o build quando há push na main
+      - main  
 
 jobs:
   build-and-deploy:
@@ -22,10 +22,15 @@ jobs:
         run: npm install
 
       - name: Build do projeto
-        run: npm run build
+        run: npm run build  # Se o diretório de build for diferente, ajuste aqui
 
-      - name: Deploy para GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: gh-pages  # Faz o deploy na branch gh-pages
-          folder: build  # Diretório onde o build é gerado
+      - name: Deploy para a branch pages
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git checkout --orphan pages
+          git rm -rf .
+          mv build/* .  # Se for Vite, talvez seja "dist/*"
+          git add .
+          git commit -m "Deploy GitHub Pages"
+          git push -f origin pages
