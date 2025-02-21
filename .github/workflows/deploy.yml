@@ -1,9 +1,9 @@
-name: Deploy GitHub Pages
+name: Deploy para GitHub Pages
 
 on:
   push:
     branches:
-      - main  
+      - main 
 
 jobs:
   build-and-deploy:
@@ -18,11 +18,18 @@ jobs:
         with:
           node-version: 18
 
-      - name: Instalar dependências
+      - name: Instalar dependências do backend
         run: npm install
 
-      - name: Build do projeto
-        run: npm run build  # Se o diretório de build for diferente, ajuste aqui
+      - name: Instalar dependências do frontend
+        run: |
+          cd app
+          npm install
+
+      - name: Build do frontend
+        run: |
+          cd app
+          npm run build
 
       - name: Deploy para a branch pages
         run: |
@@ -30,7 +37,7 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git checkout --orphan pages
           git rm -rf .
-          mv build/* .  # Se for Vite, talvez seja "dist/*"
+          mv app/build/* .
           git add .
-          git commit -m "Deploy GitHub Pages"
+          git commit -m "Deploy automático para GitHub Pages"
           git push -f origin pages
